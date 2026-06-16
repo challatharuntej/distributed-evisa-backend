@@ -1,6 +1,6 @@
 {
   "deploy": {
-    "container": "TOMCAT8",
+    "container": "TOMCAT9",
     "war": [
       {
         "file": "DistributedEVisa.war"
