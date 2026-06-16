@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 public class ApplicationController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
-    private static final String URL = "jdbc:mysql://localhost:3306/evisa_db";
-    private static final String USER = "root123";       
-    private static final String PASSWORD = "root";   
+    private static final String URL = "String url = \"jdbc:mysql://b1q6tizvtr1ekfeadloq-mysql.services.clever-cloud.com:3306/b1q6tizvtr1ekfeadloq\";";
+    private static final String USER = "u19vrja67kumytyz";       
+    private static final String PASSWORD = "0duqCytcpV9R4OMkdR4q";   
 
     // GET Method: Fetches records for the Admin Dashboard
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
