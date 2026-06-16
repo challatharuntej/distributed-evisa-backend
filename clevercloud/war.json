@@ -1,0 +1,10 @@
+{
+  "deploy": {
+    "container": "TOMCAT8",
+    "war": [
+      {
+        "file": "DistributedEVisa.war"
+      }
+    ]
+  }
+}
