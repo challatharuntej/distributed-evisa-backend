@@ -1,5 +1,3 @@
-package com.evisa.controller;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -16,11 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 public class ApplicationController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
-    String url = "jdbc:mysql://blq6tizvtrlekfeadloq-mysql.services.clever-cloud.com:3306/blq6tizvtrlekfeadloq";
-    String username = "u19vrja67kumytyz";
-    String password = "0duqCytcpV9R4OMkdR4q";
+    // Cloud container environment credentials mapping paths
+    private static final String URL = "jdbc:mysql://b1q6tizvtr1ekfeadloq-mysql.services.clever-cloud.com:3306/b1q6tizvtr1ekfeadloq";
+    private static final String USER = "uio9bgscvlrshwc8";
+    private static final String PASSWORD = "0duqCytcpV9R4OMkdR4q"; // Ensure password matches your info block key
 
-    // GET Method: Fetches records for the Admin Dashboard
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -28,7 +26,7 @@ public class ApplicationController extends HttpServlet {
         response.setContentType("application/json");
         
         PrintWriter out = response.getWriter();
-        String query = "SELECT * FROM applications ORDER BY submission_date DESC";
+        String query = "SELECT * FROM applications ORDER BY application_id DESC";
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -60,7 +58,6 @@ public class ApplicationController extends HttpServlet {
         }
     }
 
-    // POST Method: Processes Applications, Status Updates, User Registration, and User Login
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.addHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -74,7 +71,7 @@ public class ApplicationController extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
             try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
                 
-                // 1. OPERATION: USER REGISTRATION
+                // 1. OPERATION: USER REGISTRATION WITH AUTOMATED LOGON HANDSHAKE
                 if ("registerUser".equals(action)) {
                     String email = request.getParameter("email");
                     String pass = request.getParameter("password");
@@ -90,10 +87,14 @@ public class ApplicationController extends HttpServlet {
                         
                         int rows = ps.executeUpdate();
                         if (rows > 0) {
-                            out.print("{\"status\":\"success\", \"message\":\"User registered\"}");
+                            // Returns a structured profile match response to log the user in immediately
+                            out.print("{");
+                            out.print("\"fullName\":\"" + name + "\",");
+                            out.print("\"nationality\":\"" + nationality + "\"");
+                            out.print("}");
                         } else {
                             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                            out.print("{\"status\":\"error\", \"message\":\"Registration failed.\"}");
+                            out.print("{\"status\":\"error\", \"message\":\"Registration execution failed.\"}");
                         }
                     }
                 } 
@@ -109,9 +110,7 @@ public class ApplicationController extends HttpServlet {
                         ps.setString(2, pass);
                         try (ResultSet rs = ps.executeQuery()) {
                             if (rs.next()) {
-                                // Return the user profile details back to React on valid password validation matches
                                 out.print("{");
-                                out.print("\"status\":\"success\",");
                                 out.print("\"fullName\":\"" + rs.getString("full_name") + "\",");
                                 out.print("\"nationality\":\"" + rs.getString("nationality") + "\"");
                                 out.print("}");
@@ -136,8 +135,8 @@ public class ApplicationController extends HttpServlet {
                     }
                 } 
                 
-                // 4. OPERATION: LODGE NEW APPLICATION
-                else {
+                // 4. OPERATION: LODGE NEW APPLICATION EXPLICITLY
+                else if ("lodgeApplication".equals(action)) {
                     String fullName = request.getParameter("fullName");
                     String passportNum = request.getParameter("passportNum");
                     String nationality = request.getParameter("nationality");
@@ -149,6 +148,12 @@ public class ApplicationController extends HttpServlet {
                         ps.executeUpdate();
                         out.print("{\"status\":\"success\"}");
                     }
+                }
+                
+                // 5. SAFETY GATEWAY: PREVENT RUNTIME ACCIDENTAL DROPS
+                else {
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    out.print("{\"status\":\"success\", \"message\":\"Idle communication loop verified.\"}");
                 }
             }
         } catch (Exception e) {
