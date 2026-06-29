@@ -16,7 +16,7 @@ public class ApplicationController extends HttpServlet {
     
     // Cloud container environment credentials mapping paths
     private static final String URL = "jdbc:mysql://b1q6tizvtr1ekfeadloq-mysql.services.clever-cloud.com:3306/b1q6tizvtr1ekfeadloq";
-    private static final String USER = "uio9bgscvlrshwc8";
+    private static final String USER = "u19vrja67kumytyz";
     private static final String PASSWORD = "0duqCytcpV9R4OMkdR4q"; // Ensure password matches your info block key
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
